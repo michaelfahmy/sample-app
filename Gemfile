@@ -6,7 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'rails', '~> 5.0.3'
-gem 'pg', '~> 0.18'
+gem 'mysql2', '~> 0.3.16'
 gem 'puma', '3.4.0'
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'sass-rails', '~> 5.0'
