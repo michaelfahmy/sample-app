@@ -1,8 +1,11 @@
 require 'test_helper'
 
 class SiteLayoutTest < ActionDispatch::IntegrationTest
+  setup do
+    @user = users(:michael)
+  end
 
-  test "layout links" do
+  test "static layout links" do
     get root_path
     assert_template 'static_pages/home'
     assert_select "a[href=?]", root_path, count: 2
@@ -14,6 +17,33 @@ class SiteLayoutTest < ActionDispatch::IntegrationTest
     assert_select "title", full_title("Contact")
     get signup_path
     assert_select "title", full_title("Sign up")
+  end
+
+  test "logged in layout links" do
+    log_in_as @user
+    assert_select "a[href=?]", login_path, count: 0
+    get users_path
+    assert_response :success
+    assert_template 'users/index'
+    get user_path(@user)
+    assert_response :success
+    assert_template 'users/show'
+    get edit_user_path
+    assert_response :success
+    assert_template 'users/edit'
+    delete logout_path
+    assert_not is_logged_in?
+    assert_redirected_to root_url
+  end
+
+  test "non logged in layout links" do
+    get root_path
+    assert_select "a[href=?]", users_path,     count: 0
+    assert_select "a[href=?]", logout_path,    count: 0
+    assert_select "a[href=?]", login_path,     count: 1
+    get login_path
+    assert_response :success
+    assert_template 'sessions/new'
   end
 
 end
